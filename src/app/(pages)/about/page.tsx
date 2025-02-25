@@ -1,48 +1,66 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Shoe } from "@/types/shoe";
 
-type Shoe = {
-  id: number | string;
-  name: string;
-  alias: string;
-  price: number;
-  description: string;
-  sizes: number[];
-  shortDescription: string;
-  quantity: number;
-  deleted: boolean;
-  categories: string[];
-  relatedProducts: number[];
-  feature: boolean;
-  image: string;
-  imgLink: string;
+export const metadata = {
+  title: "Shoes App - Home",
+  description:
+    "Explore our wide range of shoes with the best prices and quality.",
+  openGraph: {
+    title: "Shoes App - Home",
+    description:
+      "Explore our wide range of shoes with the best prices and quality.",
+    url: "https://shoesshopbc70.vercel.app",
+    images: [
+      {
+        url: "https://apistore.cybersoft.edu.vn/images/van-old-school.png",
+        width: 800,
+        height: 600,
+        alt: "Shoes App",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shoes App - Home",
+    description:
+      "Explore our wide range of shoes with the best prices and quality.",
+    images: ["https://apistore.cybersoft.edu.vn/images/van-old-school.png"],
+  },
+  jsonLd: {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    name: "Shoes App",
+    url: "https://yourwebsite.com",
+    description:
+      "Explore our wide range of shoes with the best prices and quality.",
+    image: "https://yourwebsite.com/images/og-image.jpg",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://yourwebsite.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  },
 };
 
-export default function Home() {
-  const [shoes, setShoes] = useState<Shoe[]>([]);
-
+export default async function About() {
   const fetchShoe = async () => {
     try {
       const reponse = await fetch(
         "https://apistore.cybersoft.edu.vn/api/Product"
       );
       const data = await reponse.json();
-      setShoes(data.content);
+      return data.content;
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    fetchShoe();
-  }, []);
-
-  console.log(shoes);
+  const data = await fetchShoe();
+  console.log(data);
 
   const renderListShoes = () => {
-    return shoes?.map((shoe) => {
+    return data?.map((shoe: Shoe) => {
       return (
         <div
           key={shoe.id}
@@ -66,12 +84,12 @@ export default function Home() {
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
               {shoe.description}
             </p>
-            <a
-              href="#"
+            <Link
+              href={`detail/${shoe.id}`}
               className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Detail
-            </a>
+            </Link>
           </div>
         </div>
       );
@@ -81,23 +99,6 @@ export default function Home() {
   return (
     <div className="container mx-auto grid grid-cols-4 gap-4">
       {renderListShoes()}
-      {/* 
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <h1>Lear Nextjs</h1>
-      <Image
-        src="https://movienew.cybersoft.edu.vn/hinhanh/bong-dung-trung-so_gp01.jpg"
-        alt=""
-        width={500}
-        height={600}
-      />
-
-      <Image
-        src="/images/product-header2.png"
-        alt=""
-        width={500}
-        height={600}
-      />
-    </div> */}
     </div>
   );
 }
